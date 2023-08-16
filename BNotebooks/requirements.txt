@@ -1,0 +1,1 @@
+ipykernel==6.25.1    # Install to enable connection to notebooks.
