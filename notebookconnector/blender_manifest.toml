@@ -1,0 +1,32 @@
+schema_version = "1.0.0"
+
+id = "notebookconnector"
+version = "0.1.0"
+name = "Notebook Connector"
+tagline = "Use Blender as a kernel for running Jupyter Notebooks"
+maintainer = "Brady Johnston<brady.johnston@me.com>"
+type = "add-on"
+website = "https://bradyajohnston.github.io/NotebookConnector"
+platforms = [
+	"windows-x64",
+	"linux-x64",
+	"macos-arm64",
+	"macos-x64",
+]
+tags = [
+	"Geometry Nodes",
+	"Import-Export"
+]
+blender_version_min = "4.2.0"
+license = [
+  "SPDX:GPL-3.0-or-later"
+]
+copyright =[
+	"2022-2024 Brady Johnston",
+]
+
+wheels = [
+]
+
+[permissions]
+files = "Connecting and registering to nodebook backends"
