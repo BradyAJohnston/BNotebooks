@@ -8,8 +8,10 @@ import bpy
 
 import tomlkit
 
-toml_path = "notebookconnector/blender_manifest.toml"
-whl_path = "./notebookconnector/wheels"
+ADDON = "notebookconnector"
+
+toml_path = f"{ADDON}/blender_manifest.toml"
+whl_path = f"./{ADDON}wheels"
 
 
 @dataclass
@@ -28,7 +30,11 @@ macos_arm = Platform(pypi_suffix="macosx_12_0_arm64", metadata="macos-arm64")
 macos_intel = Platform(pypi_suffix="macosx_10_16_x86_64", metadata="macos-x64")
 
 
-required_packages = ["jupyterlab==4.0.7"]
+required_packages = [
+    "pywinpty>=2",
+    "jupyter-server>=2.14",
+    "jupyterlab>=4",
+]
 
 
 build_platforms = [
@@ -63,13 +69,13 @@ def download_whls(
 
     for platform in platforms:
         run_python(
-            f"-m pip download {' '.join(required_packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
+            f"-m pip download {' '.join(required_packages)} --dest ./{ADDON}/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
         )
 
 
 def update_toml_whls(platforms):
     # Define the path for wheel files
-    wheels_dir = "molecularnodes/wheels"
+    wheels_dir = f"{ADDON}/wheels"
     wheel_files = glob.glob(f"{wheels_dir}/*.whl")
     wheel_files.sort()
 
@@ -121,7 +127,7 @@ def update_toml_whls(platforms):
 
 
 def clean_files(suffix: str = ".blend1") -> None:
-    pattern_to_remove = f"molecularnodes/**/*{suffix}"
+    pattern_to_remove = f"{ADDON}/**/*{suffix}"
     for blend1_file in glob.glob(pattern_to_remove, recursive=True):
         os.remove(blend1_file)
 
@@ -133,12 +139,12 @@ def build_extension(split: bool = True) -> None:
     if split:
         subprocess.run(
             f"{bpy.app.binary_path} --command extension build"
-            " --split-platforms --source-dir molecularnodes --output-dir .".split(" ")
+            f" --split-platforms --source-dir {ADDON} --output-dir .".split(" ")
         )
     else:
         subprocess.run(
             f"{bpy.app.binary_path} --command extension build "
-            "--source-dir molecularnodes --output-dir .".split(" ")
+            f"--source-dir {ADDON} --output-dir .".split(" ")
         )
 
 
