@@ -51,7 +51,7 @@ class NC_Kernel_Append(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        installer.install()
+        installer.install(bpy.app.binary_path)
         return {"FINISHED"}
 
 

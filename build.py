@@ -31,17 +31,18 @@ macos_intel = Platform(pypi_suffix="macosx_10_16_x86_64", metadata="macos-x64")
 
 
 required_packages = [
-    "pywinpty>=2",
-    "jupyter-server>=2.14",
+    # "pywinpty>=2",
+    # "jupyter-server>=2.14",
+    "pyzmq",
     "jupyterlab>=4",
 ]
 
 
 build_platforms = [
-    windows_x64,
-    linux_x64,
+    # windows_x64,
+    # linux_x64,
     macos_arm,
-    macos_intel,
+    # macos_intel,
 ]
 
 
