@@ -18,43 +18,6 @@ EXTENSIONS_PATH = pathlib.Path(__file__).parent.parent.parent
 EXTENSIONS_SITE_PACKAGES = EXTENSIONS_PATH / ".local/lib/python3.11/site-packages/"
 
 
-# def install(exec_path=None) -> None:
-#     old_argv = sys.argv
-#     sys.argv = ["ipykernel", "install", "--user"]
-#     try:
-#         sys.path.insert(0, EXTENSIONS_PATH / ".local/lib/python3.11/site-packages/")
-#         runpy.run_module("ipykernel", run_name="__main__")
-#     except Exception as e:
-#         raise e
-#     finally:
-#         sys.argv = old_argv
-
-
-# def get_jupyter_path():
-#     # Get the directory of Blender's Python binary
-#     if _is_apple_silicon:
-#         # python is stored in /Applications/Blender.app/Contents/Resources/3.6/python/bin/
-#         # blender binary is stored in /Applications/Blender.app/Contents/MacOS
-#         binary_path = os.path.dirname(bpy.app.binary_path)
-#         new_path = os.path.join(binary_path, "../Resources/")
-#         blender_python_dir = os.path.abspath(new_path)
-#     else:
-#         blender_python_dir = os.path.dirname(bpy.app.binary_path)
-#     blender_version = ".".join(bpy.app.version_string.split(".")[:2])
-
-#     # Determine the path to the jupyter command based on the operating system
-#     if os.name == "nt":  # Windows
-#         jupyter_path = os.path.join(
-#             blender_python_dir, blender_version, "python", "Scripts", "jupyter.exe"
-#         )
-#     else:  # Linux/Mac
-#         jupyter_path = (
-#             EXTENSIONS_PATH / ".local/lib/python3.11/site-packages/jupyter.py"
-#         )
-
-#     return jupyter_path
-
-
 def get_kernel_path(kernel_dir):
     kernel_path = None
     if kernel_dir:
@@ -146,7 +109,7 @@ def install(kernel_dir=None, kernel_name="blender", overwrite=True):
     }
     blender_config_dict = {
         "blender_executable": str(blender_exec),
-        "python_path": python_path,
+        "python_path": str(EXTENSIONS_SITE_PACKAGES),
     }
     kernel_json_dst = kernel_install_path.joinpath("kernel.json")
     blender_config_json_dst = kernel_install_path.joinpath("blender_config.json")

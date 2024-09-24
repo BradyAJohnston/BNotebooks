@@ -51,7 +51,7 @@ class NC_Kernel_Append(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        installer.install()
+        installer.install(kernel_name=self.name, overwrite=self.overwrite)
         return {"FINISHED"}
 
 
@@ -60,11 +60,6 @@ class NC_Kernel_Remove(bpy.types.Operator):
     bl_label = "Remove Kernel"
     bl_description = "Append this blender's python as a jupyter kernel."
     bl_options = {"REGISTER"}
-
-    # overwrite: bpy.props.BoolProperty(
-    #     name = "overwrite",
-    #     default = True
-    # )
 
     name: bpy.props.StringProperty(  # type: ignore
         name="Kernel Name", description="Name for the kernel", default="Blender"

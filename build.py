@@ -5,8 +5,19 @@ import sys
 from dataclasses import dataclass
 from typing import List, Union
 import bpy
+import shutil
 
-import tomlkit
+
+def run_python(args: str):
+    python = os.path.realpath(sys.executable)
+    subprocess.run([python] + args.split(" "))
+
+
+try:
+    import tomlkit
+except ImportError:
+    run_python("-m pip install tomlkit".split(" "))
+    import tomlkit
 
 ADDON = "notebookconnector"
 
@@ -27,7 +38,6 @@ class Platform:
 windows_x64 = Platform(pypi_suffix="win_amd64", metadata="windows-x64")
 linux_x64 = Platform(pypi_suffix="manylinux2014_x86_64", metadata="linux-x64")
 macos_arm = Platform(pypi_suffix="macosx_12_0_arm64", metadata="macos-arm64")
-macos_intel = Platform(pypi_suffix="macosx_10_16_x86_64", metadata="macos-x64")
 
 
 required_packages = [
@@ -41,14 +51,8 @@ required_packages = [
 build_platforms = [
     # windows_x64,
     # linux_x64,
-    macos_arm,
-    # macos_intel,
+    macos_arm
 ]
-
-
-def run_python(args: str):
-    python = os.path.realpath(sys.executable)
-    subprocess.run([python] + args.split(" "))
 
 
 def remove_whls():
@@ -74,22 +78,32 @@ def download_whls(
         )
 
 
+def get_whls(dir):
+    return glob.glob(f"{dir}/*.whl")
+
+
 def update_toml_whls(platforms):
     # Define the path for wheel files
     wheels_dir = f"{ADDON}/wheels"
-    wheel_files = glob.glob(f"{wheels_dir}/*.whl")
+
+    wheel_files = get_whls(wheels_dir)
     wheel_files.sort()
 
-    # Packages to remove
-    packages_to_remove = {
-        # "pyarrow",
-        # "certifi",
-        # "charset_normalizer",
-        # "idna",
-        # "numpy",
-        # "requests",
-        # "urllib3",
-    }
+    # the package detection inside of blender, it currently misses the "universal"
+    # builds for mac platforms, so we have to replace them with the `arm64` for apple
+    # silicon macs. Should be able to do the same fo the intel macs but frankly I can't
+    # be bothered trying to support them at the moment (or maybe ever)
+    for whl in wheel_files:
+        if "universal2" in whl:
+            for platform in ["arm64"]:
+                shutil.copy(whl, whl.replace("universal2", platform))
+
+            os.remove(whl)
+
+    wheel_files = get_whls(wheels_dir)
+
+    # Packages to remove (currently empty so I haven't tried optimising build sizes at all)
+    packages_to_remove = {}
 
     # Filter out unwanted wheel files
     to_remove = []
