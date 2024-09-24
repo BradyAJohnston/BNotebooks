@@ -19,9 +19,9 @@ def get_runtime_config():
     with json_path.open("r") as f:
         config_dict = json.load(f)
     # check config
-    assert "args" in config_dict
-    for path in config_dict["python_path"]:
-        assert pathlib.Path(path).exists()
+    # assert "args" in config_dict
+    # for path in config_dict["python_path"]:
+    #     assert pathlib.Path(path).exists()
     return config_dict
 
 

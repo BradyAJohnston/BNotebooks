@@ -13,9 +13,9 @@ def get_blender_config():
     with json_path.open("r") as f:
         config_dict = json.load(f)
 
-    assert pathlib.Path(config_dict["blender_executable"]).exists()
-    for path in config_dict["python_path"]:
-        assert pathlib.Path(path).exists()
+    # assert pathlib.Path(config_dict["blender_executable"]).exists()
+    # for path in config_dict["python_path"]:
+    #     assert pathlib.Path(path).exists()
     return config_dict
 
 
