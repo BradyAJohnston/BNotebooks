@@ -50,8 +50,8 @@ required_packages = [
 
 build_platforms = [
     # windows_x64,
-    # linux_x64,
-    macos_arm
+    linux_x64,
+    macos_arm,
 ]
 
 
