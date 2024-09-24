@@ -18,8 +18,6 @@ def get_runtime_config():
     config_dict = None
     with json_path.open("r") as f:
         config_dict = json.load(f)
-
-    print(config_dict)
     # check config
     assert "args" in config_dict
     for path in config_dict["python_path"]:
@@ -28,7 +26,6 @@ def get_runtime_config():
 
 
 RUNTIME_CONFIG = get_runtime_config()
-print(RUNTIME_CONFIG)
 
 # Must append system python path with ipykernel etc.
 sys.path.extend(RUNTIME_CONFIG["python_path"])

@@ -40,18 +40,12 @@ def install(kernel_dir=None, kernel_name="blender", overwrite=True):
     """
     Install kernel to jupyter notebook
     """
+
+    kernel_name = kernel_name.strip()
+    if " " in kernel_name:
+        raise ValueError(f"Kernel name cannot contain spaces: {kernel_name=}")
+
     blender_exec = bpy.app.binary_path
-    # check version
-    supported_py_version = (3, 10)
-    current_py_version = (sys.version_info.major, sys.version_info.minor)
-    if current_py_version != supported_py_version:
-        message = """
-        Current python interpreter version is not {}.{}!
-        blender_notebook will link pip packages installed in this interpreter
-        to the blender embedded python interpreter. Mismatch in python version
-        might cause problem launching the jupyter kernel. Are you sure to
-        continue?
-        """.format(*supported_py_version)
 
     # check input
     blender_path = pathlib.Path(blender_exec)
@@ -93,6 +87,9 @@ def install(kernel_dir=None, kernel_name="blender", overwrite=True):
         if pathlib.Path(path).is_dir():
             python_path.append(str(path))
 
+    for path in [str(EXTENSIONS_SITE_PACKAGES), str(EXTENSIONS_PATH / "user_default")]:
+        python_path.append(path)
+
     # dump jsons
     kernel_dict = {
         "argv": [
@@ -106,12 +103,10 @@ def install(kernel_dir=None, kernel_name="blender", overwrite=True):
     }
     blender_config_dict = {
         "blender_executable": str(blender_exec),
-        "python_path": str(EXTENSIONS_SITE_PACKAGES),
+        "python_path": [path for path in python_path if pathlib.Path(path).exists],
     }
     kernel_json_dst = kernel_install_path.joinpath("kernel.json")
     blender_config_json_dst = kernel_install_path.joinpath("blender_config.json")
-    print(f"{kernel_json_dst=}")
-    print(f"{kernel_dict=}")
     with kernel_json_dst.open("w") as f:
         json.dump(kernel_dict, f, indent=2)
     with blender_config_json_dst.open("w") as f:

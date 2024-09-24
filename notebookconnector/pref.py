@@ -14,17 +14,17 @@ class NotebookConnectorPreferences(bpy.types.AddonPreferences):
     name: bpy.props.StringProperty(  # type: ignore
         name="Name",
         description="Name that will appear in the Jupyter kernal list",
-        default=f"blender_{bpy.app.version_string}",
+        default=f"blender_{bpy.app.version_string.replace(' ', '_')}",
     )
 
     def draw(self, context):
         layout = self.layout
-        col = layout.column(heading="", align=False)
 
-        col.label(text="Manage kernel registration.")
+        layout.label(text="Manage kernel registration.")
         row = layout.row()
         row.prop(self, "name")
         row.prop(self, "overwrite")
+        row = layout.row()
         op = row.operator("bn.kernel_append")
         op.overwrite = self.overwrite
         op.name = self.name
@@ -51,7 +51,14 @@ class NC_Kernel_Append(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        installer.install(kernel_name=self.name, overwrite=self.overwrite)
+        try:
+            installer.install(kernel_name=self.name, overwrite=self.overwrite)
+        except ValueError:
+            self.report(
+                {"ERROR"},
+                "Kernel name cannot contain spaces!",
+            )
+            return {"CANCELLED"}
         return {"FINISHED"}
 
 
