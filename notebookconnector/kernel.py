@@ -18,17 +18,14 @@ def get_runtime_config():
     config_dict = None
     with json_path.open("r") as f:
         config_dict = json.load(f)
-
-    print(config_dict)
     # check config
-    assert ("args" in config_dict)
-    for path in config_dict["python_path"]:
-        assert (pathlib.Path(path).exists())
+    # assert "args" in config_dict
+    # for path in config_dict["python_path"]:
+    #     assert pathlib.Path(path).exists()
     return config_dict
 
 
 RUNTIME_CONFIG = get_runtime_config()
-print(RUNTIME_CONFIG)
 
 # Must append system python path with ipykernel etc.
 sys.path.extend(RUNTIME_CONFIG["python_path"])
@@ -43,7 +40,6 @@ class JupyterKernelLoop(bpy.types.Operator):
     kernelApp = None
 
     def modal(self, context, event):
-
         if event.type == "TIMER":
             loop = asyncio.get_event_loop()
             loop.call_soon(loop.stop)
@@ -52,15 +48,13 @@ class JupyterKernelLoop(bpy.types.Operator):
         return {"PASS_THROUGH"}
 
     def execute(self, context):
-
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.016, window=context.window)
         wm.modal_handler_add(self)
 
         if not JupyterKernelLoop.kernelApp:
             JupyterKernelLoop.kernelApp = IPKernelApp.instance()
-            JupyterKernelLoop.kernelApp.initialize(
-                ["python"] + RUNTIME_CONFIG["args"])
+            JupyterKernelLoop.kernelApp.initialize(["python"] + RUNTIME_CONFIG["args"])
             # doesn't start event loop, kernelApp.start() does
             JupyterKernelLoop.kernelApp.kernel.start()
 
@@ -78,7 +72,6 @@ class TmpTimer(bpy.types.Operator):
     _timer = None
 
     def modal(self, context, event):
-
         if event.type == "TIMER":
             bpy.ops.asyncio.jupyter_kernel_loop()
             self.cancel(context)
@@ -86,7 +79,6 @@ class TmpTimer(bpy.types.Operator):
         return {"FINISHED"}
 
     def execute(self, context):
-
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.016, window=context.window)
         wm.modal_handler_add(self)
